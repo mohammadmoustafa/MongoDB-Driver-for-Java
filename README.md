@@ -28,6 +28,9 @@ dependencies {
 ```
 
 **Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
+
+### Adding the Driver
+Import the provided java file into your project. Once that is done you can start using the driver.
   
 ## To Do
 - [ ] Implement a document update method
