@@ -1,4 +1,4 @@
-# MongoDB Driver for Java
+# MongoDB Driver for Java [![Build Status](https://travis-ci.org/travis-ci/travis-web.svg?branch=master)](https://travis-ci.org/travis-ci/travis-web)
 
 This driver was created as a means to simplify the use of MongoDB within a Java project.
 
