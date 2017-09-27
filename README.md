@@ -35,3 +35,4 @@ Import the provided java file into your project. Once that is done you can start
 ## To Do
 - [ ] Implement a document update method
 - [ ] Add an overloaded method to the constructor to allow specification of the database URI
+- [ ] Look at using the mongodb-driver dependancy instead of the legacy uber jar dependency
