@@ -1,14 +1,30 @@
 # MongoDB Driver for Java
 
 This driver was created as a means to simplify the use of MongoDB within a Java project.
-The current version of the driver works with MongoDB v3.5
 
+## Current Version
+The current version of the driver supports MongoDB **v3.5**
 ## Installation
 
 ### Maven
-  Add the maven dependeny
+Add the following to your `pom.xml`:
+'<dependencies>
+    <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver</artifactId>
+        <version>3.5.0</version>
+    </dependency>
+</dependencies>'
+
+**Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
 ### Gradle
-  Add the gradle dependency
+Add the following to your gradle dependencies:
+'  dependencies {
+    compile 'org.mongodb:mongodb-driver:3.5.0'
+  }
+'
+
+**Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
   
 ## To Do
 - [ ] Implement a document update method
