@@ -8,21 +8,24 @@ The current version of the driver supports MongoDB **v3.5**
 
 ### Maven
 Add the following to your `pom.xml`:
-'<dependencies>
+```
+<dependencies>
     <dependency>
         <groupId>org.mongodb</groupId>
         <artifactId>mongodb-driver</artifactId>
         <version>3.5.0</version>
     </dependency>
-</dependencies>'
+</dependencies>
+```
 
 **Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
 ### Gradle
 Add the following to your gradle dependencies:
-'  dependencies {
+```
+dependencies {
     compile 'org.mongodb:mongodb-driver:3.5.0'
-  }
-'
+}
+```
 
 **Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
   
