@@ -26,7 +26,7 @@ dependencies {
 ```
 **Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
 
-## Not using Maven or Gradle?
+### Not using Maven or Gradle?
 You can download an uber jar for use with your project. Download the jar and include it in your projects build path.
 
 ### Adding the Driver
