@@ -34,6 +34,7 @@ Import the provided java file into your project. Once that is done you can start
   
 ## To Do
 - [x] Add an overloaded method to the constructor to allow specification of the database URI
+- [ ] Package library into a jar
 - [ ] Error checking for database connection on a specific (non-local) host
 - [ ] Implement a document update method
 - [ ] Look at using the mongodb-driver dependancy instead of the legacy uber jar dependency
