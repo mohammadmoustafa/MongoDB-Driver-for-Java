@@ -11,4 +11,4 @@ The current version of the driver works with MongoDB v3.5
   Add the gradle dependency
   
 ## To Do
--[] Implement a document update method
+- [x] Implement a document update method
