@@ -11,7 +11,7 @@ Add the following to your `pom.xml`:
 <dependencies>
     <dependency>
         <groupId>org.mongodb</groupId>
-        <artifactId>mongodb-driver</artifactId>
+        <artifactId>mongo-java-driver</artifactId>
         <version>3.5.0</version>
     </dependency>
 </dependencies>
@@ -21,10 +21,13 @@ Add the following to your `pom.xml`:
 Add the following to your gradle dependencies:
 ```
 dependencies {
-    compile 'org.mongodb:mongodb-driver:3.5.0'
+    compile 'org.mongodb:mongo-java-driver:3.5.0'
 }
 ```
 **Note:** Make sure you use the version of MongoDB that works with this driver. You can find the Mongo dependencies [here.](https://mongodb.github.io/mongo-java-driver/)
+
+## Not using Maven or Gradle?
+You can download an uber jar for use with your project. Download the jar and include it in your projects build path.
 
 ### Adding the Driver
 Import the provided java file into your project. Once that is done you can start using the driver.
