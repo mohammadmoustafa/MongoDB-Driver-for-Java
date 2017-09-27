@@ -33,6 +33,7 @@ You can download an uber jar for use with your project. Download the jar and inc
 Import the provided java file into your project. Once that is done you can start using the driver.
   
 ## To Do
+- [x] Add an overloaded method to the constructor to allow specification of the database URI
+- [ ] Error checking for database connection on a specific (non-local) host
 - [ ] Implement a document update method
-- [ ] Add an overloaded method to the constructor to allow specification of the database URI
 - [ ] Look at using the mongodb-driver dependancy instead of the legacy uber jar dependency
