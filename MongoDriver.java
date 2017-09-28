@@ -1,4 +1,4 @@
-package ca.on.gov.edu.mongodb;
+package io.github.mohammadmoustafa;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
