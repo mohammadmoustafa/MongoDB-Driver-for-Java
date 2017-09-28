@@ -30,7 +30,7 @@ dependencies {
 You can download an uber jar for use with your project. Download the jar and include it in your projects build path.
 
 ### Adding the Driver
-Import the provided java file into your project. Once that is done you can start using the driver.
+Include the provided jar file in your projects build path.
   
 ## To Do
 - [x] Add an overloaded method to the constructor to allow specification of the database URI
