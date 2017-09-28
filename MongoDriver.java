@@ -5,12 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.AggregateIterable;
@@ -21,7 +23,6 @@ import com.mongodb.client.model.CreateCollectionOptions;
 
 public class MongoDriver {
 	
-	private String dbName;
 	private MongoClient client;
 	private MongoDatabase db;
 	private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -30,6 +31,7 @@ public class MongoDriver {
 	private String INFO = "INFO";
 	private String WARNING = "WARNING";
 	private String ERROR = "ERROR";
+	private boolean logging = true;
 	private List<Bson> aggregateFilters;
 	private String aggregateCollection;
 	
@@ -41,12 +43,101 @@ public class MongoDriver {
 	public MongoDriver(String database) {
 		// tone down the crazy logging mongo keeps trying to do
 		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
-		this.dbName = database;
 		this.client = new MongoClient();
-		this.db = client.getDatabase(dbName);
+		this.db = client.getDatabase(database);
 		this.aggregateFilters = new ArrayList<>();
 		this.aggregateCollection = "DEFAULT";
-		System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, this.dbName));
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
+	}
+	
+	/**
+	 * Creates an instance of the mongo database for the user to interact with.
+	 * 
+	 * @param database The name of the database to connect to, as a String
+	 */
+	public MongoDriver(String database, MongoClientURI uri) {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		this.client = new MongoClient(uri);
+		this.db = client.getDatabase(database);
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
+	}
+	
+	/**
+	 * Creates an instance of the mongo database for the user to interact with.
+	 * 
+	 * @param database The name of the database to connect to, as a String
+	 */
+	public MongoDriver(String database, String hostname, int port) {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		this.client = new MongoClient(hostname, port);
+		this.db = client.getDatabase(database);
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
+	}
+	
+	/**
+	 * Creates an instance of the mongo database for the user to interact with.
+	 * 
+	 * @param database The name of the database to connect to, as a String
+	 */
+	public MongoDriver(String database, String hostname, int port, boolean logging) {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		this.client = new MongoClient(hostname, port);
+		this.db = client.getDatabase(database);
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		this.logging = logging;
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
+	}
+	
+	/**
+	 * Creates an instance of the mongo database for the user to interact with.
+	 * 
+	 * @param database The name of the database to connect to, as a String
+	 */
+	public MongoDriver(String database, MongoClientURI uri, boolean logging) {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		this.client = new MongoClient(uri);
+		this.db = client.getDatabase(database);
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		this.logging = logging;
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
+	}
+	
+	/**
+	 * Creates an instance of the mongo database for the user to interact with.
+	 * 
+	 * @param database The name of the database to connect to, as a String
+	 */
+	public MongoDriver(String database, boolean logging) {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		this.client = new MongoClient();
+		this.db = client.getDatabase(database);
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		this.logging = logging;
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, database));
+		}
 	}	
 	
 	public String getDatabaseName() {
@@ -66,9 +157,16 @@ public class MongoDriver {
 		}
 	}
 	
+	/**
+	 * Creates a collection with a given name.
+	 * 
+	 * @param name Name of the collection, as a String
+	 */
 	public void createCollection(String name) {
 		db.createCollection(name);
-		System.out.println(String.format("[%s] %s --- Created collection '%s'", INFO, date, name));
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Created collection '%s'", INFO, date, name));
+		}
 	}
 	
 	/**
@@ -79,7 +177,9 @@ public class MongoDriver {
 	 */
 	public void createCollection(String name, CreateCollectionOptions options) {
 		db.createCollection(name, options);
-		System.out.println(String.format("[%s] %s --- Created collection '%s' with specified options", INFO, date, name));
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Created collection '%s' with specified options", INFO, date, name));
+		}
 	}
 	
 	/**
@@ -127,7 +227,9 @@ public class MongoDriver {
 	 * @return A FindIterable object
 	 */
 	public FindIterable<Document> find(String collection) {
-		System.out.println(String.format("[%s] %s --- Querying database...", INFO, date));
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Querying database...", INFO, date));
+		}
 		return this.db.getCollection(collection).find();
 	}
 	
@@ -140,6 +242,9 @@ public class MongoDriver {
 	 * @return A FindIterable object
 	 */
 	public FindIterable<Document> find(String collection, Bson filter) {
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Querying database...", INFO, date));
+		}
 		return this.db.getCollection(collection).find(filter);
 	}
 	
@@ -152,6 +257,9 @@ public class MongoDriver {
 	 * @return A FindIterable object
 	 */
 	public FindIterable<Document> find(String collection, int limit) {
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Querying database (limit of %d documents)...", INFO, date, limit));
+		}
 		return this.db.getCollection(collection).find().limit(limit);
 	}
 	
@@ -165,6 +273,9 @@ public class MongoDriver {
 	 * @return A FindIterable object
 	 */
 	public FindIterable<Document> find(String collection, Bson filter, int limit) {
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Querying database (limit of %d documents)...", INFO, date, limit));
+		}
 		return this.db.getCollection(collection).find(filter).limit(limit);
 	}
 	
@@ -177,11 +288,17 @@ public class MongoDriver {
 	public void insert(String collection, Document doc) {
 		try {
 			this.db.getCollection(collection).insertOne(doc);
-			System.out.println(String.format("[%s] %s --- Inserted document with ID='%s' into database", INFO, date, doc.get("_id")));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Inserted document with ID='%s' into database", INFO, date, doc.get("_id")));
+			}
 		} catch (MongoWriteException e) {
-			System.out.println(String.format("[%s] %s --- Failed to write to database due to insert command error", ERROR, date));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Failed to write to database due to insert command error", ERROR, date));
+			}
 		} catch (MongoException e) {
-			System.out.println(String.format("[%s] %s --- Failed to write to database due to UNKNOWN", ERROR, date));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Failed to write to database due to UNKNOWN", ERROR, date));
+			}
 		}
 	}
 	
@@ -194,16 +311,30 @@ public class MongoDriver {
 	public void insert(String collection, List<Document> docs) {
 		try {
 			this.db.getCollection(collection).insertMany(docs);
-			System.out.println(String.format("[%s] %s --- Inserted %d documents into database", INFO, date, docs.size()));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Inserted %d documents into database", INFO, date, docs.size()));
+			}
 		} catch (MongoWriteException e) {
-			System.out.println(String.format("[%s] %s --- Failed to write to database due to insert command error", ERROR, date));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Failed to write to database due to insert command error", ERROR, date));
+			}
 		} catch (MongoException e) {
-			System.out.println(String.format("[%s] %s --- Failed to write to database due to UNKNOWN", ERROR, date));
+			if (this.logging) {
+				System.out.println(String.format("[%s] %s --- Failed to write to database due to UNKNOWN", ERROR, date));
+			}
 		}
 	}
 	
-	public void update(String collection, Document doc) {
-		// TODO implement the update method
+	/**
+	 * Updates a document in the database with the provided document.
+	 * Only updates one document per call.
+	 * 
+	 * @param collection The name of the collection the document is in, as a String
+	 * @param filter A filter to specify which document to update
+	 * @param doc The Document object representing the updated document
+	 */
+	public void update(String collection, Bson filter, Document doc) {
+		this.db.getCollection(collection).replaceOne(filter, doc);
 	}
 	
 	/**
@@ -224,9 +355,14 @@ public class MongoDriver {
 	 * @return An iterable of documents
 	 */
 	public AggregateIterable<Document> aggregate(String collection, List<Bson> filters) {
-		System.out.println(String.format("[%s] %s --- Performing aggregation...", INFO, date));
-		AggregateIterable<Document> documents = db.getCollection(collection).aggregate(filters);
-		System.out.println(String.format("[%s] %s --- Aggregation complete, returning results...", INFO, date));
+		AggregateIterable<Document> documents = null;
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Performing aggregation...", INFO, date));
+			documents = db.getCollection(collection).aggregate(filters);
+			System.out.println(String.format("[%s] %s --- Aggregation complete, returning results...", INFO, date));
+		} else {
+			documents = db.getCollection(collection).aggregate(filters);
+		}
 		this.aggregateCollection = "DEFAULT";
 		this.aggregateFilters.clear();
 		return documents;
@@ -270,10 +406,10 @@ public class MongoDriver {
 	 */
 	public MongoDriver lookup(String fromCollection, String localField, String foreignField, String as) {
 		Bson lookup = new Document("$lookup",
-									new Document("from", fromCollection)
-												.append("localField", localField)
-								                .append("foreignField", foreignField)
-								                .append("as", as));
+				new Document("from", fromCollection)
+							.append("localField", localField)
+					.append("foreignField", foreignField)
+					.append("as", as));
 		this.aggregateFilters.add(lookup);
 		return this;
 	}
@@ -291,15 +427,37 @@ public class MongoDriver {
 	}
 	
 	/**
+	 * Add a project aggregate to the pipeline.
+	 * CURRENTLY DOES NOT WORK.
+	 * 
+	 * @param fields A Map that maps the fields to be kept to their respective mongo fields where the
+	 * values can be found.
+	 * @return MongoDriver
+	 */
+	public MongoDriver project(Map<String, String> fields) {
+		Document projectFields = new Document();
+		for (Map.Entry<String, String> entry : fields.entrySet()) {
+			String field = entry.getKey();
+			String value = "$" + entry.getValue();
+			projectFields.append(field, value);
+		}
+		Bson project = new Document("$project", projectFields);
+		this.aggregateFilters.add(project);
+		return this;
+	}
+	
+	/**
 	 * Perform the aggregation that has been build by the aggregateBuilder.
 	 * 
 	 * @return An iterable containing all the documents that result from the built aggregation
 	 */
 	public AggregateIterable<Document> aggregate() {
-		if (this.aggregateFilters.size() == 0) {
-			System.out.println(String.format("[%s] %s --- No filters have been applied using the aggregate builder, aggregate() will return an empty iterable", WARNING, date));
-		} else if (this.aggregateCollection.equals("DEFAULT")) {
-			System.out.println(String.format("[%s] %s --- No collection has been set for the aggregate builder, aggregate() will return an empty iterable", WARNING, date));
+		if (this.logging) {
+			if (this.aggregateFilters.size() == 0) {
+				System.out.println(String.format("[%s] %s --- No filters have been applied using the aggregate builder, aggregate() will return an empty iterable", WARNING, date));
+			} else if (this.aggregateCollection.equals("DEFAULT")) {
+				System.out.println(String.format("[%s] %s --- No collection has been set for the aggregate builder, aggregate() will return an empty iterable", WARNING, date));
+			}
 		}
 		return aggregate(this.aggregateCollection, this.aggregateFilters);
 	}
