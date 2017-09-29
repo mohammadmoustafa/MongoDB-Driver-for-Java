@@ -1,11 +1,16 @@
 package io.github.mohammadmoustafa;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.bson.Document;
@@ -34,11 +39,62 @@ public class MongoDriver {
 	private boolean logging = true;
 	private List<Bson> aggregateFilters;
 	private String aggregateCollection;
+	private InputStream inputStream;
+	
+	/**
+	 * Returns a map containing all the properties in the conf file.
+	 * Maps the property name to its value.
+	 * 
+	 * @return Map<String, String>
+	 */
+	private Map<String, String> readProperties() {
+		Map<String, String> properties = new HashMap<>();
+		try {
+			Properties prop = new Properties();
+			inputStream = getClass().getClassLoader().getResourceAsStream("mongo.conf");
+			if (inputStream != null) {
+				prop.load(inputStream);
+			} else {
+				throw new FileNotFoundException("Could not find a mongo.conf file on the classpath");
+			}
+			properties.put("database_name", prop.getProperty("database_name"));
+			properties.put("database_uri", prop.getProperty("database_uri"));
+			properties.put("driver_logging", prop.getProperty("driver_logging"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return properties;
+	}
+	
+	/**
+	 * Instantiates a connection to the mongo database. Reads database
+	 * name and URI from the mongo.conf file that is on the class path.
+	 */
+	public MongoDriver() {
+		// tone down the crazy logging mongo keeps trying to do
+		java.util.logging.Logger.getLogger("org.mongodb.driver").setLevel(Level.SEVERE);
+		Map<String, String> properties = readProperties();
+		this.client = new MongoClient(new MongoClientURI(properties.get("database_uri")));
+		this.db = client.getDatabase(properties.get("database_name"));
+		this.aggregateFilters = new ArrayList<>();
+		this.aggregateCollection = "DEFAULT";
+		this.logging = Boolean.parseBoolean(properties.get("driver_logging"));
+		if (this.logging) {
+			System.out.println(String.format("[%s] %s --- Connected to MongoDB database '%s'", INFO, date, this.db.getName()));
+		}
+	}
 	
 	/**
 	 * Creates an instance of the mongo database for the user to interact with.
+	 * Connects to the localhost database connection.
 	 * 
-	 * @param database The name of the database to connect to, as a String
+	 * @param database The name of the database to use, as a String
 	 */
 	public MongoDriver(String database) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -56,6 +112,7 @@ public class MongoDriver {
 	 * Creates an instance of the mongo database for the user to interact with.
 	 * 
 	 * @param database The name of the database to connect to, as a String
+	 * @param uri The URI of the database host to connect to, as a MongoClientURI object
 	 */
 	public MongoDriver(String database, MongoClientURI uri) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -73,6 +130,8 @@ public class MongoDriver {
 	 * Creates an instance of the mongo database for the user to interact with.
 	 * 
 	 * @param database The name of the database to connect to, as a String
+	 * @param hostname Name of the host to connect to, as a String
+	 * @param port The port on which to connect to, as an int
 	 */
 	public MongoDriver(String database, String hostname, int port) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -90,6 +149,9 @@ public class MongoDriver {
 	 * Creates an instance of the mongo database for the user to interact with.
 	 * 
 	 * @param database The name of the database to connect to, as a String
+	 * @param hostname Name of the host to connect to, as a String
+	 * @param port The port on which to connect to, as an int
+	 * @param logging Whether or not to print log messages, as a boolean
 	 */
 	public MongoDriver(String database, String hostname, int port, boolean logging) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -108,6 +170,8 @@ public class MongoDriver {
 	 * Creates an instance of the mongo database for the user to interact with.
 	 * 
 	 * @param database The name of the database to connect to, as a String
+	 * @param uri The URI of the database host to connect to, as a MongoClientURI object
+	 * @param logging Whether or not to print log messages, as a boolean
 	 */
 	public MongoDriver(String database, MongoClientURI uri, boolean logging) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -126,6 +190,7 @@ public class MongoDriver {
 	 * Creates an instance of the mongo database for the user to interact with.
 	 * 
 	 * @param database The name of the database to connect to, as a String
+	 * @param logging Whether or not to print log messages, as a boolean
 	 */
 	public MongoDriver(String database, boolean logging) {
 		// tone down the crazy logging mongo keeps trying to do
@@ -406,10 +471,10 @@ public class MongoDriver {
 	 */
 	public MongoDriver lookup(String fromCollection, String localField, String foreignField, String as) {
 		Bson lookup = new Document("$lookup",
-				new Document("from", fromCollection)
-							.append("localField", localField)
-					.append("foreignField", foreignField)
-					.append("as", as));
+									new Document("from", fromCollection)
+												.append("localField", localField)
+								                .append("foreignField", foreignField)
+								                .append("as", as));
 		this.aggregateFilters.add(lookup);
 		return this;
 	}
